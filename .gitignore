@@ -1,0 +1,14 @@
+# Visual Studio Directories
+Debug
+Release
+__vm
+.vs
+
+# Visual Studio Files
+*.vcxproj
+*.vcxproj.*
+*.sln
+
+# Wifi Definitions file - untracked because it contains possibly sensitive
+# information specific to wifi networks.
+WifiDefs.h
