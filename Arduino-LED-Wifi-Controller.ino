@@ -22,77 +22,112 @@
 
 #include "WifiDefs.h"
 
-const char* host = "wifitest.adafruit.com";
+String serialInputString = "";
+bool serialDataReady = false;
 
+////////////////////////////////////////////////////////////////////////////////
+// @brief
+// RReads serial input and processes command responses
+////////////////////////////////////////////////////////////////////////////////
+void
+processSerial(
+   void
+   )
+{
+   if (strncmp(serialInputString, "ON", 2) == 0)
+   {
+      // Send the response back to the app
+   }
+   else if (strncmp(serialInputString, "OFF", 3) == 0)
+   {
+      // Send the response back to the app
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// @brief
+// Initializes necessary values during power on
+////////////////////////////////////////////////////////////////////////////////
 void 
 setup(
    void
    ) 
 {
    Serial.begin(115200);
-   delay(100);
+   serialInputString.reserve(256);
 
-   // We start by connecting to a WiFi network
-
-   Serial.println();
-   Serial.println();
-   Serial.print("Connecting to ");
-   Serial.println(ssid);
-  
+   // Connect to Wifi network
    WiFi.begin(ssid, password);
   
    while (WiFi.status() != WL_CONNECTED) 
    {
-      delay(500);
-      Serial.print(".");
+      // Put non-blocking delay here
    }
-
-   Serial.println("");
-   Serial.println("WiFi connected");  
-   Serial.println("IP address: ");
-   Serial.println(WiFi.localIP());
 }
 
-int value = 0;
-
+////////////////////////////////////////////////////////////////////////////////
+// @brief
+// The Wifi controller's main loop.
+////////////////////////////////////////////////////////////////////////////////
 void 
 loop(
    void
    ) 
 {
-   delay(5000);
-   ++value;
+   if (serialDataReady)
+   {
+      processSerial();
+      serialInputString = "";
+      serialDataReady = false;
+   }
 
-   Serial.print("connecting to ");
-   Serial.println(host);
+   // // Use WiFiClient class to create TCP connections
+   // WiFiClient client;
+   // const int httpPort = 80;
+   // if (!client.connect(host, httpPort)) 
+   // {
+   //    Serial.println("connection failed");
+   //    return;
+   // }
   
-   // Use WiFiClient class to create TCP connections
-   WiFiClient client;
-   const int httpPort = 80;
-   if (!client.connect(host, httpPort)) 
+   // // We now create a URI for the request
+   // String url = "/testwifi/index.html";
+   // Serial.print("Requesting URL: ");
+   // Serial.println(url);
+  
+   // // This will send the request to the server
+   // client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+   //             "Host: " + host + "\r\n" + 
+   //             "Connection: close\r\n\r\n");
+   // delay(500);
+  
+   // // Read all the lines of the reply from server and print them to Serial
+   // while(client.available())
+   // {
+   //    String line = client.readStringUntil('\r');
+   //    Serial.print(line);
+   // }
+  
+   // Serial.println();
+   // Serial.println("closing connection");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// @brief
+// Processes serial coming from the Arduino LED controller
+////////////////////////////////////////////////////////////////////////////////
+void
+serialEvent(
+   void
+   )
+{
+   while (Serial.available())
    {
-      Serial.println("connection failed");
-      return;
+      char in = (char)Serial.read();
+      serialInputString += in;
+      if (in == '\n')
+      {
+         serialDataReady = true;
+      }
    }
-  
-   // We now create a URI for the request
-   String url = "/testwifi/index.html";
-   Serial.print("Requesting URL: ");
-   Serial.println(url);
-  
-   // This will send the request to the server
-   client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" + 
-               "Connection: close\r\n\r\n");
-   delay(500);
-  
-   // Read all the lines of the reply from server and print them to Serial
-   while(client.available())
-   {
-      String line = client.readStringUntil('\r');
-      Serial.print(line);
-   }
-  
-   Serial.println();
-   Serial.println("closing connection");
 }

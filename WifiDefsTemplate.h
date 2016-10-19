@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // WifiDefsTemplate.h - Definitions specific to the network the esp8266 will be
-// connecting to. This file is a template. Change the values to your own wifi
+// connecting to. 
+// 
+// This file is a template. Change the values to your own wifi
 // network and rename this file to WifiDefs.h.
 //
 // Copyright 2016 Samuel R Fields
